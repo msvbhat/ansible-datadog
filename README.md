@@ -19,6 +19,12 @@ ansible-galaxy install Datadog.datadog
 Role Variables
 --------------
 
+- `datadog_site` - The site of the Datadog intake to send Agent data to.
+  Defaults to 'datadoghq.com', set to 'datadoghq.eu' to send data to the EU
+  site. This option is only available with agent version >= 6.6.0.
+- `datadog_url` - The host of the Datadog intake server to send Agent data to,
+  only set this option if you need the Agent to send data to a custom URL.
+  Overrides the site setting defined in `datadog_site`.
 - `datadog_api_key` - Your Datadog API key.
 - `datadog_agent_version` - The pinned version of the Agent to install (optional, but highly recommended)
   Examples: `1:6.0.0-1` on apt-based platforms, `6.0.0-1` on yum-based platforms
@@ -131,10 +137,12 @@ This example will configure the PostgeSQL check through **autodiscovery**:
 
 Example Playbooks
 -----------------
+
+Sending data to Datadog US (default) and configuringa few checks.
 ```yml
 - hosts: servers
   roles:
-    - { role: Datadog.datadog, become: yes }  # On Ansible < 1.9, use `sudo: yes` instead of `become: yes`
+    - { role: Datadog.datadog, become: yes }
   vars:
     datadog_api_key: "123456"
     datadog_agent_version: "1:6.0.0-1" # for apt-based platforms, use a `6.0.0-1` format on yum-based platforms
@@ -192,12 +200,15 @@ Example Playbooks
             sourcecategory: http_web_access
 ```
 
+Example for sending data to EU site:
 ```yml
 - hosts: servers
   roles:
-    - { role: Datadog.datadog, become: yes, datadog_api_key: "mykey" }  # On Ansible < 1.9, use `sudo: yes` instead of `become: yes`
+    - { role: Datadog.datadog, become: yes }
+  vars:
+    datadog_site: "datadoghq.eu"
+    datadog_api_key: "123456"
 ```
-
 
 Process Agent
 -------------------------
